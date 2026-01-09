@@ -8,15 +8,22 @@ const MapView = () => {
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    mapRef.current = new maplibregl.Map({
+    const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: 'https://demotiles.maplibre.org/style.json',
-      center: [121.0, 14.6], // Philippines center
+      center: [121.0, 14.6],
       zoom: 6,
     });
 
+    map.on('load', () => {
+      console.log('✅ Map loaded');
+      map.resize(); // 🔴 forces redraw
+    });
+
+    mapRef.current = map;
+
     return () => {
-      mapRef.current?.remove();
+      map.remove();
       mapRef.current = null;
     };
   }, []);
@@ -24,7 +31,7 @@ const MapView = () => {
   return (
     <div
       ref={mapContainerRef}
-      style={{ width: '100%', height: '100vh' }}
+       className="w-full h-full absolute top-0 left-0"
     />
   );
 };
